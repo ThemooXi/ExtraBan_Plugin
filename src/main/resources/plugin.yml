@@ -1,0 +1,125 @@
+name: ExtraBan
+version: '${project.version}'
+main: com.extraban.Main
+api-version: "26.2"
+description: Comprehensive Ban and Moderation Management System with Advanced Features.
+author: m_1z.4
+website: https://github.com/ThemooXi/ExtraBan_Plugin
+prefix: ExtraBan
+load: STARTUP
+
+commands:
+  eb:
+    description: Main command for ExtraBan management.
+    usage: /<command> [ban|unban|tban|freeze|unfreeze|warn|unwarn|list|help|reload|version|update]
+    aliases: [extraban, eban, extrab, exstraban, exstrab]
+
+permissions:
+  extraban.*:
+    description: Grants all permissions for ExtraBan commands and features.
+    children:
+      extraban.ban: true
+      extraban.unban: true
+      extraban.tempban: true
+      extraban.freeze: true
+      extraban.unfreeze: true
+      extraban.warn: true
+      extraban.reload: true
+      extraban.update: true
+      extraban.banlist: true
+      extraban.warn.see: true
+
+  extraban.ban:
+    description: Allows banning players permanently.
+    default: op
+
+  extraban.unban:
+    description: Allows pardoning a banned player (unban).
+    default: op
+
+  extraban.tempban:
+    description: Allows banning players temporarily.
+    default: op
+
+  extraban.freeze:
+    description: Allows freezing a player (restricting movement and interaction).
+    default: op
+
+  extraban.unfreeze:
+    description: Allows unfreezing a previously frozen player.
+    default: op
+
+  extraban.warn:
+    description: Allows warning players and managing warnings (warn/unwarn/list).
+    default: op
+
+  extraban.reload:
+    description: Allows reloading the ExtraBan configuration.
+    default: op
+
+  extraban.update:
+    description: Allows checking and receiving notifications for plugin updates.
+    default: op
+
+  extraban.banlist:
+    description: Allows viewing the server's ban list.
+    default: op
+
+  extraban.warn.see:
+    description: Allows the user to see global warning messages (broadcasts).
+    default: op
+
+  extstraban.*:
+    description: Deprecated alias for extraban.*.
+    children:
+      extraban.*: true
+
+  extstraban.ban:
+    description: Deprecated alias for extraban.ban.
+    children:
+      extraban.ban: true
+
+  extstraban.unban:
+    description: Deprecated alias for extraban.unban.
+    children:
+      extraban.unban: true
+
+  extstraban.tempban:
+    description: Deprecated alias for extraban.tempban.
+    children:
+      extraban.tempban: true
+
+  extstraban.freeze:
+    description: Deprecated alias for extraban.freeze.
+    children:
+      extraban.freeze: true
+
+  extstraban.unfreeze:
+    description: Deprecated alias for extraban.unfreeze.
+    children:
+      extraban.unfreeze: true
+
+  extstraban.warn:
+    description: Deprecated alias for extraban.warn.
+    children:
+      extraban.warn: true
+
+  extstraban.reload:
+    description: Deprecated alias for extraban.reload.
+    children:
+      extraban.reload: true
+
+  extstraban.update:
+    description: Deprecated alias for extraban.update.
+    children:
+      extraban.update: true
+
+  extstraban.banlist:
+    description: Deprecated alias for extraban.banlist.
+    children:
+      extraban.banlist: true
+
+  extstraban.warn.see:
+    description: Deprecated alias for extraban.warn.see.
+    children:
+      extraban.warn.see: true
