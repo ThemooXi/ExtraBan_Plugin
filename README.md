@@ -1,5 +1,9 @@
 # ExtraBan
 
+<p align="center">
+  <img src="ExtraBan-Icon.png" alt="ExtraBan Icon" width="256">
+</p>
+
 **Advanced moderation plugin for Paper 26.2+**
 
 ExtraBan is a modern Minecraft moderation plugin built for server owners who want powerful staff tools without unnecessary complexity. Manage bans, freezes, and warnings from one clean command hub — with fully customizable messages, action-bar countdowns, and profile-based bans for modern Paper servers.
