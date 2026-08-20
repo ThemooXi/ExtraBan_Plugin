@@ -10,7 +10,10 @@ ExtraBan is a modern Minecraft moderation plugin built for server owners who wan
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2+-green.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-25+-orange.svg)](https://adoptium.net/)
-[![Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)](https://github.com/ThemooXi/ExtraBan_Plugin)
+[![Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
+[![Premium](https://img.shields.io/badge/Premium-Paid-gold.svg)](https://www.spigotmc.org/members/themo_124x.1835993/)
+
+> **Premium Plugin** — ExtraBan is a paid plugin. Purchase a license on SpigotMC to download and use it.
 
 ---
 
@@ -74,10 +77,21 @@ Most moderation plugins feel either outdated or overloaded. **ExtraBan** focuses
 
 ---
 
-## Installation
+## Purchase & Download
 
-1. Download the latest release from [GitHub Releases](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
-2. Place `ExtraBan-2.0.0.jar` in your server's `plugins/` folder
+ExtraBan is a **premium (paid)** plugin.
+
+| Platform | Link |
+|---|---|
+| **Buy on SpigotMC** | [SpigotMC Profile](https://www.spigotmc.org/members/themo_124x.1835993/) |
+| **Latest Release Info** | [GitHub Releases](https://github.com/ThemooXi/ExtraBan_Plugin/releases) |
+
+> Licensed buyers receive the download through SpigotMC. Do not redistribute the JAR.
+
+## Installation (Licensed Users)
+
+1. Purchase and download `ExtraBan-2.0.0.jar` from SpigotMC
+2. Place the JAR in your server's `plugins/` folder
 3. Restart the server — `config.yml` will be generated automatically
 4. Edit `plugins/ExtraBan/config.yml` to customize settings and messages
 5. Assign permissions to your staff team (LuckPerms, PermissionsEx, etc.)
@@ -173,15 +187,9 @@ All in-game messages, kick screens, help menus, and broadcasts are fully editabl
 
 ## Building from Source
 
-```bash
-mvn clean package
-```
+Source code is provided for transparency and documentation. **Building or using this software without a valid license is not permitted.**
 
-The compiled JAR will be in the `target/` directory.
-
-**Dependencies:**
-- Paper API `26.2.build.112-stable`
-- Java 25+
+Licensed users should use the official JAR from SpigotMC.
 
 ---
 
@@ -228,7 +236,10 @@ Join the community, report issues, or request features:
 
 ## License
 
-All rights reserved © 2024–2026 **m_1z.4**
+**Premium / Commercial License** — All rights reserved © 2024–2026 **m_1z.4**
+
+This plugin is paid software. Unauthorized copying, redistribution, or resale is prohibited.
+See [LICENSE](LICENSE) for full terms.
 
 ---
 
