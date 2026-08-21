@@ -6,11 +6,6 @@ All notable changes to this project are documented in this file.
 
 ## [2.0.0] - 2026-08-20
 
-### Changed
-- ExtraBan is now a **Premium (Paid)** plugin
-- License changed from MIT to Commercial License
-- Official downloads are sold through SpigotMC
-
 ### Added
 - Renamed plugin to **ExtraBan**
 - Minecraft 26.2 and modern Paper API support
@@ -22,6 +17,8 @@ All notable changes to this project are documented in this file.
 - Set `api-version: 26.2` in plugin.yml
 - Replaced deprecated ChatColor and `BanList.Type.NAME` APIs
 - Full English localization for plugin messages and documentation
+- Free MIT license — no purchase required
+- Free downloads via GitHub Releases
 
 ---
 
