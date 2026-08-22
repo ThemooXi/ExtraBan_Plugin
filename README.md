@@ -229,7 +229,7 @@ Join the community, report issues, or request features:
 | **GitHub Profile** | [github.com/ThemooXi](https://github.com/ThemooXi) |
 | **GitHub Repository** | [ExtraBan_Plugin](https://github.com/ThemooXi/ExtraBan_Plugin) |
 | **SpigotMC Profile** | [themo_124x](https://www.spigotmc.org/members/themo_124x.1835993/) |
-| **SpigotMC Plugin Page** | [ExtraBan Plugin](https://www.spigotmc.org/resources/exstraban-plugin.119078/) |
+| **SpigotMC Plugin Page** | [ExtraBan Plugin](https://www.spigotmc.org/resources/extraban-plugin.138140/) |
 
 ---
 
