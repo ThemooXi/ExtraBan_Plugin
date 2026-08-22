@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ExtraBanTabCompleter implements TabCompleter {
 
     private final List<String> mainCommands = Arrays.asList(
-            "ban", "unban", "tban", "tempban", "freeze", "unfreeze",
+            "ban", "kick", "unban", "tban", "tempban", "freeze", "unfreeze",
             "warn", "unwarn", "banlist", "help", "reload", "version", "update"
     );
 
@@ -38,6 +38,7 @@ public class ExtraBanTabCompleter implements TabCompleter {
 
         switch (args[0].toLowerCase()) {
             case "ban" -> completions = handleBanCompletions(sender, args);
+            case "kick" -> completions = handleKickCompletions(sender, args);
             case "unban" -> completions = handleUnbanCompletions(sender, args);
             case "tban", "tempban" -> completions = handleTempBanCompletions(sender, args);
             case "freeze" -> completions = handleFreezeCompletions(sender, args);
@@ -86,6 +87,7 @@ public class ExtraBanTabCompleter implements TabCompleter {
         List<String> available = new ArrayList<>();
 
         if (sender.hasPermission("extraban.ban")) available.add("ban");
+        if (sender.hasPermission("extraban.kick")) available.add("kick");
         if (sender.hasPermission("extraban.unban")) available.add("unban");
 
         if (sender.hasPermission("extraban.tempban")) {
@@ -123,6 +125,18 @@ public class ExtraBanTabCompleter implements TabCompleter {
         return switch (args.length) {
             case 2 -> getOnlinePlayerNames(args[1]);
             case 3 -> StringUtil.copyPartialMatches(args[2], getBanReasons(), new ArrayList<>());
+            default -> Collections.emptyList();
+        };
+    }
+
+    private List<String> handleKickCompletions(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("extraban.kick")) {
+            return Collections.emptyList();
+        }
+
+        return switch (args.length) {
+            case 2 -> getOnlinePlayerNames(args[1]);
+            case 3 -> StringUtil.copyPartialMatches(args[2], getKickReasons(), new ArrayList<>());
             default -> Collections.emptyList();
         };
     }
@@ -194,6 +208,10 @@ public class ExtraBanTabCompleter implements TabCompleter {
 
     private List<String> getBanReasons() {
         return List.of("Cheating", "Hacking", "Exploiting", "Toxicity", "Harassment", "Spam", "Advertising", "Griefing");
+    }
+
+    private List<String> getKickReasons() {
+        return List.of("Spam", "Toxicity", "Disrespect", "Advertising", "AFK", "Rule_violation");
     }
 
     private List<String> getFreezeReasons() {

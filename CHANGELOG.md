@@ -4,6 +4,28 @@ All notable changes to this project are documented in this file.
 
 ---
 
+## [2.1.0] - 2026-08-22
+
+### Added
+- `/eb kick <player> [reason]` with dedicated settings, messages, and 
+action-bar countdown
+
+### Fixed
+- Config upgrades now write new keys into the existing `config.yml` (no need to delete the plugin folder)
+- Restored simple auto-merge: any key in the JAR missing from the live file is added automatically
+- Config rewrites keep the same section/key order as the shipped `config.yml`
+- Added `config-revision` so same plugin version still merges new settings (e.g. kick)
+- `/eb reload` also merges missing keys from the JAR defaults
+- Removed `saveConfig()` on disable which could overwrite/skip migrated settings
+
+### Changed
+- Redesigned `/eb` help menu with clear sections (Ban, Freeze, Warn, Utility)
+- Unified and polished all plugin messages (kick screens, broadcasts, banlist, updates)
+- Locked help, errors, usage, banlist, system, update messages, and Discord (not editable via config)
+- Reorganized config by feature: settings and messages grouped under ban / freeze / warn / kick
+
+---
+
 ## [2.0.0] - 2026-08-20
 
 ### Added

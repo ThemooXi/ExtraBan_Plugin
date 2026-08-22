@@ -184,7 +184,7 @@ When you find a bug:
 
 2. **Collect information**
    ```
-   Version: 2.0.0
+   Version: 2.1.0
    Java Version: 25
    Paper Version: 26.2
    Error: [detailed description]
@@ -210,7 +210,7 @@ mvn clean compile
 ### Production Build
 ```bash
 mvn clean package
-# Creates ExtraBan-2.0.0.jar in target/
+# Creates ExtraBan-2.1.0.jar in target/
 ```
 
 ### With Shade (bundle dependencies)

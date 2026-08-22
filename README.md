@@ -10,7 +10,7 @@ ExtraBan is a modern Minecraft moderation plugin built for server owners who wan
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2+-green.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-25+-orange.svg)](https://adoptium.net/)
-[![Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
+[![Version](https://img.shields.io/badge/Version-2.1.0-blue.svg)](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Free](https://img.shields.io/badge/Download-Free-brightgreen.svg)](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
 
@@ -60,7 +60,7 @@ Most moderation plugins feel either outdated or overloaded. **ExtraBan** focuses
 - Manual and automatic update checker
 
 ### Configuration
-- Fully customizable messages
+- Customizable ban, freeze, and warn messages
 - Automatic config backup before updates
 - Version-aware config migration
 - Granular permission nodes
@@ -74,14 +74,14 @@ Most moderation plugins feel either outdated or overloaded. **ExtraBan** focuses
 | Minecraft | 26.2+ |
 | Server Software | Paper (recommended) |
 | Java | 25+ |
-| Plugin Version | 2.0.0 |
+| Plugin Version | 2.1.0 |
 
 ---
 
 ## Installation
 
 1. Download the latest free release from [GitHub Releases](https://github.com/ThemooXi/ExtraBan_Plugin/releases)
-2. Place `ExtraBan-2.0.0.jar` in your server's `plugins/` folder
+2. Place `ExtraBan-2.1.0.jar` in your server's `plugins/` folder
 3. Restart the server — `config.yml` will be generated automatically
 4. Edit `plugins/ExtraBan/config.yml` to customize settings and messages
 5. Assign permissions to your staff team (LuckPerms, PermissionsEx, etc.)
@@ -142,7 +142,7 @@ Legacy `extstraban.*` permissions are supported for backward compatibility.
 Key settings in `config.yml`:
 
 ```yaml
-config-version: "2.0.0"
+config-version: "2.1.0"
 
 update-checker:
   enabled: true
@@ -151,17 +151,20 @@ update-checker:
   notify-staff: true
 
 settings:
-  general:
-    Discord: "https://discord.gg/fJTSA6vnVQ"
+  ban:
     default-reason: "Unfair advantage"
     tempban-max-duration: "30d"
+    action-bar:
+      enabled: true
+      countdown-time: 10
 
-  action-bar:
-    enabled: true
-    countdown-time: 10
+  freeze:
+    countdown-time: 15
 ```
 
-All in-game messages, kick screens, help menus, and broadcasts are fully editable under the `messages:` section.
+Settings are grouped by feature (`ban`, `freeze`, `warn`, `banlist`).  
+Ban/freeze/warn messages under `messages:` are editable.  
+Help, errors, usage, banlist UI, system, update messages, and Discord are built into the plugin.
 
 ---
 

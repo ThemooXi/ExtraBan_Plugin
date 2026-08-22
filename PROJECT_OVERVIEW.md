@@ -3,7 +3,7 @@
 ## Project Information
 
 **Name:** ExtraBan - Advanced Ban & Moderation System  
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Type:** Paper/Bukkit Plugin  
 **Language:** Java 25  
 **Minecraft Version:** 26.2+  
@@ -195,7 +195,7 @@ ExtraBan/
    ```
 
 2. **Install**
-   - Copy `ExtraBan-2.0.0.jar` to `plugins/`
+   - Copy `ExtraBan-2.1.0.jar` to `plugins/`
    - Restart the server
 
 3. **Configure**

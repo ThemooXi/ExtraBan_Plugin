@@ -46,9 +46,9 @@ public class ActionBarManager {
 
     public void startCountdown(Player target, String staffName, String reason, String type, String duration) {
         UUID targetId = target.getUniqueId();
-        cancelCountdown(targetId);
+        cancelCountdown(targetId, false);
 
-        int countdownTime = plugin.getConfig().getInt("settings.action-bar.countdown-time", 10);
+        int countdownTime = countdownFor(type);
         PendingAction action = new PendingAction(target.getName(), staffName, reason, type, duration, countdownTime);
         actionData.put(targetId, action);
 
@@ -63,13 +63,12 @@ public class ActionBarManager {
 
                 if (currentAction.countdown <= 0) {
                     executeAction(target, currentAction);
-                    cancelCountdown(targetId);
+                    cancelCountdown(targetId, false);
                     return;
                 }
 
-                String message = messages.setting(
-                        "settings.action-bar.warning-message",
-                        "&c&lBan incoming &8| &e{time}s &7by &f{staff}",
+                String message = messages.raw(
+                        messagePrefix(currentAction.type) + ".action-bar-warning",
                         "time", String.valueOf(currentAction.countdown),
                         "staff", currentAction.staffName);
                 sendActionBar(target, message);
@@ -81,32 +80,42 @@ public class ActionBarManager {
     }
 
     public void cancelCountdown(UUID targetId) {
+        cancelCountdown(targetId, true);
+    }
+
+    private void cancelCountdown(UUID targetId, boolean notifyCancel) {
         BukkitTask task = pendingActions.remove(targetId);
         if (task != null) {
             task.cancel();
         }
 
         PendingAction action = actionData.remove(targetId);
-        if (action != null) {
+        if (notifyCancel && action != null) {
             Player target = Bukkit.getPlayer(targetId);
             if (target != null) {
-                sendActionBar(target, messages.setting(
-                        "settings.action-bar.cancelled-message",
-                        "&a&lBan cancelled"));
+                sendActionBar(target, messages.raw(messagePrefix(action.type) + ".action-bar-cancelled"));
             }
         }
     }
 
     private void executeAction(Player target, PendingAction action) {
-        sendActionBar(target, messages.setting(
-                "settings.action-bar.executed-message",
-                "&c&lBan executed"));
+        sendActionBar(target, messages.raw(messagePrefix(action.type) + ".action-bar-executed"));
 
-        if ("ban".equals(action.type)) {
-            executeFinalBan(target, action);
-        } else if ("tban".equals(action.type)) {
-            executeFinalTempBan(target, action);
+        switch (action.type) {
+            case "ban" -> executeFinalBan(target, action);
+            case "tban" -> executeFinalTempBan(target, action);
+            case "kick" -> executeFinalKick(target, action);
+            default -> {
+            }
         }
+    }
+
+    private String messagePrefix(String type) {
+        return "kick".equals(type) ? "kick" : "ban";
+    }
+
+    private int countdownFor(String type) {
+        return "kick".equals(type) ? messages.getKickActionBarCountdown() : messages.getBanActionBarCountdown();
     }
 
     private void executeFinalBan(Player target, PendingAction action) {
@@ -166,6 +175,25 @@ public class ActionBarManager {
             }
         } catch (IllegalArgumentException e) {
             executeFinalBan(target, action);
+        }
+    }
+
+    private void executeFinalKick(Player target, PendingAction action) {
+        target.kick(messages.asComponent(messages.raw("kick.screen",
+                "reason", action.reason,
+                "staff", action.staffName)));
+
+        Player staff = Bukkit.getPlayer(action.staffName);
+        if (staff != null) {
+            messages.send(staff, "kick.success",
+                    "player", target.getName(), "reason", action.reason);
+        }
+
+        if (messages.isKickBroadcast()) {
+            Bukkit.broadcast(messages.asComponent(messages.msg("kick.broadcast",
+                    "player", target.getName(),
+                    "staff", action.staffName,
+                    "reason", action.reason)));
         }
     }
 

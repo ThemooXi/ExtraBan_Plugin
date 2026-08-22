@@ -29,16 +29,21 @@ public class MessageUtils {
     }
 
     public String getDiscord() {
-        return plugin.getConfig().getString("settings.general.Discord",
-                plugin.getConfig().getString("settings.Discord", "https://discord.gg/"));
+        return LockedMessages.DISCORD;
     }
 
     public String getDefaultReason() {
-        return plugin.getConfig().getString("settings.general.default-reason", "Unfair advantage");
+        return firstString(
+                "settings.ban.default-reason",
+                "settings.general.default-reason",
+                "Unfair advantage");
     }
 
     public String getDateFormat() {
-        return plugin.getConfig().getString("settings.general.date-format", "yyyy-MM-dd HH:mm");
+        return firstString(
+                "settings.ban.date-format",
+                "settings.general.date-format",
+                "yyyy-MM-dd HH:mm");
     }
 
     public String formatDate(Date date) {
@@ -46,17 +51,33 @@ public class MessageUtils {
     }
 
     public boolean isBanBroadcast() {
+        if (plugin.getConfig().contains("settings.ban.broadcast")) {
+            return plugin.getConfig().getBoolean("settings.ban.broadcast", true);
+        }
         if (plugin.getConfig().contains("settings.general.ban-broadcast")) {
             return plugin.getConfig().getBoolean("settings.general.ban-broadcast", true);
         }
         return plugin.getConfig().getBoolean("settings.ban-broadcast", true);
     }
 
+    public boolean isUnbanBroadcast() {
+        if (plugin.getConfig().contains("settings.unban.broadcast")) {
+            return plugin.getConfig().getBoolean("settings.unban.broadcast", true);
+        }
+        return plugin.getConfig().getBoolean("settings.ban.unban-broadcast", true);
+    }
+
     public boolean isFreezeBroadcast() {
+        if (plugin.getConfig().contains("settings.freeze.broadcast")) {
+            return plugin.getConfig().getBoolean("settings.freeze.broadcast", true);
+        }
         return plugin.getConfig().getBoolean("settings.general.freeze-broadcast", true);
     }
 
     public boolean isWarnBroadcast() {
+        if (plugin.getConfig().contains("settings.warn.broadcast")) {
+            return plugin.getConfig().getBoolean("settings.warn.broadcast", true);
+        }
         return plugin.getConfig().getBoolean("settings.general.warn-broadcast", true);
     }
 
@@ -65,8 +86,11 @@ public class MessageUtils {
     }
 
     public String getTempBanMaxDuration() {
-        return plugin.getConfig().getString("settings.general.tempban-max-duration",
-                plugin.getConfig().getString("settings.tempban-max-duration", "30d"));
+        return firstString(
+                "settings.ban.tempban-max-duration",
+                "settings.general.tempban-max-duration",
+                "settings.tempban-max-duration",
+                "30d");
     }
 
     public boolean isWarnBarrierEnabled() {
@@ -75,6 +99,49 @@ public class MessageUtils {
 
     public int getWarnCustomModelData() {
         return plugin.getConfig().getInt("settings.warn.custom-model-data", 9999);
+    }
+
+    public boolean isBanActionBarEnabled() {
+        if (plugin.getConfig().contains("settings.ban.action-bar.enabled")) {
+            return plugin.getConfig().getBoolean("settings.ban.action-bar.enabled", true);
+        }
+        return plugin.getConfig().getBoolean("settings.action-bar.enabled", true);
+    }
+
+    public int getBanActionBarCountdown() {
+        if (plugin.getConfig().contains("settings.ban.action-bar.countdown-time")) {
+            return plugin.getConfig().getInt("settings.ban.action-bar.countdown-time", 10);
+        }
+        return plugin.getConfig().getInt("settings.action-bar.countdown-time", 10);
+    }
+
+    public String getKickDefaultReason() {
+        return firstString(
+                "settings.kick.default-reason",
+                "settings.ban.default-reason",
+                "Unfair advantage");
+    }
+
+    public boolean isKickBroadcast() {
+        return plugin.getConfig().getBoolean("settings.kick.broadcast", true);
+    }
+
+    public boolean isKickActionBarEnabled() {
+        return plugin.getConfig().getBoolean("settings.kick.action-bar.enabled", true);
+    }
+
+    public int getKickActionBarCountdown() {
+        return plugin.getConfig().getInt("settings.kick.action-bar.countdown-time", 5);
+    }
+
+    private String firstString(String... pathsAndDefault) {
+        for (int i = 0; i < pathsAndDefault.length - 1; i++) {
+            String value = plugin.getConfig().getString(pathsAndDefault[i]);
+            if (value != null && !value.isEmpty()) {
+                return value;
+            }
+        }
+        return pathsAndDefault[pathsAndDefault.length - 1];
     }
 
     /**
@@ -94,9 +161,13 @@ public class MessageUtils {
 
     /**
      * Colored message without prefix (kick screens, boxed menus, action bars).
+     * Locked paths (help, errors, usage, banlist, system, update) are built-in.
      */
     public String raw(String path) {
-        String message = plugin.getConfig().getString("messages." + path);
+        String message = LockedMessages.get(path);
+        if (message == null) {
+            message = plugin.getConfig().getString("messages." + path);
+        }
         if (message == null) {
             warnMissing(path);
             message = "&cMissing message: " + path;

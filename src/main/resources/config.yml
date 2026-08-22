@@ -1,14 +1,17 @@
 # ======================================================================================================
 # ExtraBan Configuration
 # ======================================================================================================
-# Placeholders used across messages:
-# {player} {staff} {reason} {duration} {time} {time_left} {expiry}
-# {Discord} {version} {count} {current} {latest} {url}
+# Editable settings and messages only.
+# Help, errors, usage, banlist UI, system, update, and Discord are built into the plugin.
+#
+# Placeholders: {player} {staff} {reason} {duration} {time} {time_left} {expiry} {id} {Discord} {count}
 # ======================================================================================================
 
-config-version: "2.0.0"
+config-version: "2.1.0"
+# Bump this when adding new config keys (even if config-version stays the same).
+config-revision: 4
 
-# Chat prefix applied to normal messages (not multi-line kick / boxed menus).
+# Chat prefix for normal messages (not kick screens).
 prefix: "&8[&6ExtraBan&8]&r "
 
 # ======================================================================================================
@@ -21,32 +24,40 @@ update-checker:
   notify-staff: true
 
 # ======================================================================================================
-# General Settings
+# Settings
 # ======================================================================================================
 settings:
-  general:
-    Discord: "https://discord.gg/fJTSA6vnVQ"
+
+  # ----- Ban -----
+  ban:
     default-reason: "Unfair advantage"
-    ban-broadcast: true
-    freeze-broadcast: true
-    warn-broadcast: true
+    broadcast: true
     tempban-max-duration: "30d"
     date-format: "yyyy-MM-dd HH:mm"
+    action-bar:
+      enabled: true
+      countdown-time: 10
 
-  action-bar:
-    enabled: true
-    countdown-time: 10
-    warning-message: "&c&lBan incoming &8| &e{time}s &7by &f{staff}"
-    executed-message: "&c&lBan executed"
-    cancelled-message: "&a&lBan cancelled"
+  # ----- Unban -----
+  unban:
+    broadcast: true
 
+  # ----- Kick -----
+  kick:
+    default-reason: "Unfair advantage"
+    broadcast: true
+    action-bar:
+      enabled: true
+      countdown-time: 5
+
+  # ----- Freeze -----
   freeze:
+    broadcast: true
     countdown-time: 15
-    countdown-message: "&b&lFreeze incoming &8| &e{time}s"
-    frozen-message-temporary: "&b&lFROZEN &8| &7Time left: &f{time_left}"
-    frozen-message-permanent: "&b&lFROZEN &8| &7Type: &fPermanent"
 
+  # ----- Warn -----
   warn:
+    broadcast: true
     barrier-enabled: true
     custom-model-data: 9999
     suggested-reasons:
@@ -56,158 +67,98 @@ settings:
       - "Minor_offense"
       - "Chat_violation"
 
+  # ----- Ban List -----
   banlist:
     max-display: 10
 
 # ======================================================================================================
 # Messages
 # ======================================================================================================
+# success   = shown to the staff member who ran the command
+# broadcast = shown to the whole server (if broadcast is enabled in settings)
+# kick      = disconnect screen shown to the banned/kicked player
+# notify    = private chat message shown to the target player
+# ======================================================================================================
 messages:
 
-  # ----- Errors -----
-  errors:
-    no-permission: "&cYou do not have permission to use this command."
-    player-not-found: "&cPlayer &f{player} &cwas not found or is offline."
-    player-not-banned: "&cPlayer &f{player} &cis not banned."
-    already-frozen: "&cPlayer &f{player} &cis already frozen."
-    not-frozen: "&cPlayer &f{player} &cis not frozen."
-    invalid-time-format: "&cInvalid time format. Use: &e1s, 1m, 1h, 1d, 1w"
-    time-examples: "&7Examples: &f1h&7, &f2d&7, &f30m&7, &f1w"
-    duration-too-long: "&cDuration exceeds the maximum allowed (&e{duration}&c)."
-    update-disabled: "&eUpdate checker is disabled in the configuration."
-    update-check-started: "&eUpdate check started. See the console for results."
-    update-check-failed: "&cFailed to check for updates. Please try again later."
-    frozen-inventory: "&cYou cannot open inventories while frozen."
-    warn-offline: "&cTarget player must be online to receive a warning."
-    warn-none: "&c{player} has no warnings on record."
-    warn-barrier-drop: "&cYou cannot drop a warning barrier."
-    warn-barrier-swap: "&cYou cannot swap a warning barrier."
-
-  # ----- Usage -----
-  usage:
-    ban: "&eUsage: &f/eb ban <player> [reason]"
-    unban: "&eUsage: &f/eb unban <player>"
-    tban: "&eUsage: &f/eb tban <player> <time> [reason]"
-    freeze: "&eUsage: &f/eb freeze <player> [time] [reason]"
-    unfreeze: "&eUsage: &f/eb unfreeze <player>"
-    warn: "&eUsage: &f/eb warn <player> [reason]"
-    unwarn: "&eUsage: &f/eb unwarn <player>"
-    warn-list: "&eUsage: &f/eb warn list <player>"
-
-  # ----- Ban -----
+  # ----- Permanent Ban -----
   ban:
-    success: "&aPermanently banned &f{player}&a. Reason: &7{reason}"
-    broadcast: "&c{player} &7was permanently banned by &c{staff}&7. Reason: &f{reason}"
+    success: "&aBanned &f{player} &apermanently &8» &7{reason}"
+    broadcast: "&c{player} &7was permanently banned by &c{staff} &8» &f{reason}"
     kick: |-
-      &c&lYou are permanently banned
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
-      &7Reason: &f{reason}
-      &7Staff: &f{staff}
-      &7Appeal: &b{Discord}
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
+      &c&lYou Are Permanently Banned
+      &8&m---------------------------------------------
+      &7Reason &8» &f{reason}
+      &7Banned by &8» &f{staff}
+      &7Appeal at &8» &b{Discord}
+      &8&m---------------------------------------------
+    action-bar-warning: "&c&lBAN &8» &e{time}s &8» &7by &f{staff}"
+    action-bar-executed: "&c&lBAN EXECUTED"
+    action-bar-cancelled: "&a&lBAN CANCELLED"
 
-  # ----- Temp Ban -----
+  # ----- Temporary Ban -----
   tempban:
-    success: "&aTemporarily banned &f{player} &afor &e{duration}&a. Reason: &7{reason}"
-    broadcast: "&c{player} &7was temp-banned by &c{staff} &7for &e{duration}&7. Reason: &f{reason}"
+    success: "&aBanned &f{player} &afor &e{duration} &8» &7{reason}"
+    broadcast: "&c{player} &7was temp-banned by &c{staff} &7for &e{duration} &8» &f{reason}"
     kick: |-
-      &c&lYou are temporarily banned
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
-      &7Reason: &f{reason}
-      &7Duration: &f{duration}
-      &7Expires: &f{expiry}
-      &7Staff: &f{staff}
-      &7Appeal: &b{Discord}
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
+      &c&lYou Are Temporarily Banned
+      &8&m---------------------------------------------
+      &7Reason &8» &f{reason}
+      &7Duration &8» &f{duration}
+      &7Expires on &8» &f{expiry}
+      &7Banned by &8» &f{staff}
+      &7Appeal at &8» &b{Discord}
+      &8&m---------------------------------------------
 
   # ----- Unban -----
+  # Only needs staff confirmation + optional public announcement (no kick screen).
   unban:
-    success: "&aSuccessfully unbanned &f{player}&a."
+    success: "&aUnbanned &f{player}&a."
+    broadcast: "&a{player} &7was unbanned by &a{staff}&7."
+
+  # ----- Kick -----
+  # kick = disconnect screen shown to the kicked player (not a ban)
+  kick:
+    success: "&aKicked &f{player} &8» &7{reason}"
+    broadcast: "&e{player} &7was kicked by &e{staff} &8» &f{reason}"
+    screen: |-
+      &e&lYou Have Been Kicked
+      &8&m---------------------------------------------
+      &7Reason &8» &f{reason}
+      &7Kicked by &8» &f{staff}
+      &8&m---------------------------------------------
+    action-bar-warning: "&e&lKICK &8» &e{time}s &8» &7by &f{staff}"
+    action-bar-executed: "&e&lKICK EXECUTED"
+    action-bar-cancelled: "&a&lKICK CANCELLED"
 
   # ----- Freeze -----
+  # {duration} = time text, or "Permanent"
+  # {status}   = action-bar status text (e.g. "Left: 5 minutes" or "Permanent")
   freeze:
-    success-permanent: "&aPermanently froze &f{player}&a. Reason: &7{reason}"
-    success-temporary: "&aFroze &f{player} &afor &e{duration}&a. Reason: &7{reason}"
-    unfreeze-success: "&aSuccessfully unfroze &f{player}&a."
-    broadcast-permanent: "&b{player} &7was permanently frozen by &b{staff}&7. Reason: &f{reason}"
-    broadcast-temporary: "&b{player} &7was frozen by &b{staff} &7for &e{duration}&7. Reason: &f{reason}"
+    success: "&aFroze &f{player} &8» &e{duration} &8» &7{reason}"
+    broadcast: "&b{player} &7was frozen by &b{staff} &8» &e{duration} &8» &f{reason}"
+    unfreeze-success: "&aUnfroze &f{player}&a."
     unfreeze-broadcast: "&a{player} &7was unfrozen by &a{staff}&7."
-    notify-temporary: |-
-      &b&lYou have been frozen
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
-      &7Reason: &f{reason}
-      &7Duration: &f{duration}
-      &7Staff: &f{staff}
-      &7Time left: &f{time_left}
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
-    notify-permanent: |-
-      &b&lYou have been frozen
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
-      &7Reason: &f{reason}
-      &7Staff: &f{staff}
-      &7Type: &fPermanent
-      &8━━━━━━━━━━━━━━━━━━━━━━━━
+    notify: |-
+      &b&lYou Have Been Frozen
+      &8&m---------------------------------------------
+      &7Reason &8» &f{reason}
+      &7Duration &8» &f{duration}
+      &7Frozen by &8» &f{staff}
+      &8&m---------------------------------------------
     unfreeze-notify: "&aYou have been unfrozen."
     auto-unfreeze: "&aYour freeze has expired. You are free to move."
+    action-bar-countdown: "&b&lFREEZE &8» &e{time}s"
+    action-bar-frozen: "&b&lFROZEN &8» &7{status}"
 
   # ----- Warn -----
   warn:
-    success: "&eWarned &f{player}&e. Reason: &7{reason}"
-    notify: "&eYou were warned by &f{staff}&e. Reason: &7{reason}"
-    broadcast: "&e{player} &7was warned by &e{staff}&7. Reason: &f{reason}"
-    unwarn-success: "&aRemoved the last warning from &f{player}&a."
-    unwarn-notify: "&aYour last warning was removed by &f{staff}&a."
-    list-header: "&8&m----------&r &6Warnings: &f{player} &7({count}) &8&m----------"
-    list-entry: "&7{count}. &f{reason} &8- &7by &f{staff} &8- &7{expiry} &8- &e#{id}"
-    list-footer: "&7Total: &e{count} &7warning(s)."
+    success: "&eWarned &f{player} &8» &7{reason}"
+    notify: "&eYou were warned by &f{staff} &8» &7{reason}"
+    broadcast: "&e{player} &7was warned by &e{staff} &8» &f{reason}"
+    unwarn-success: "&aRemoved the latest warning from &f{player}&a."
+    unwarn-notify: "&aYour latest warning was removed by &f{staff}&a."
+    list-header: "&8&m----------&r &6Warnings &8» &f{player} &7({count}) &8&m----------"
+    list-entry: "&7#{count} &8» &f{reason} &8| &7by &f{staff} &8| &7{expiry} &8| &eID {id}"
+    list-footer: "&7Total warnings: &e{count}"
     list-empty: "&e{player} has no warnings on record."
-
-  # ----- Help (boxed, no auto-prefix) -----
-  help:
-    header: "&6╔════════════ &eExtraBan Commands &6════════════╗"
-    line: "&6║"
-    ban: "&6║ &e/eb ban <player> [reason] &8- &fPermanent ban"
-    unban: "&6║ &e/eb unban <player> &8- &fUnban a player"
-    tban: "&6║ &e/eb tban <player> <time> [reason] &8- &fTemporary ban"
-    freeze: "&6║ &e/eb freeze <player> [time] [reason] &8- &fFreeze a player"
-    unfreeze: "&6║ &e/eb unfreeze <player> &8- &fUnfreeze a player"
-    warn: "&6║ &e/eb warn <player> [reason] &8- &fWarn a player"
-    unwarn: "&6║ &e/eb unwarn <player> &8- &fRemove last warning"
-    banlist: "&6║ &e/eb banlist &8- &fShow banned players"
-    reload: "&6║ &e/eb reload &8- &fReload configuration"
-    update: "&6║ &e/eb update &8- &fCheck for updates"
-    help: "&6║ &e/eb help &8- &fShow this menu"
-    version: "&6║ &e/eb version &8- &fShow plugin version"
-    time-formats: "&6║ &7Time formats: &f1s, 1m, 1h, 1d, 1w"
-    aliases: "&6║ &7Aliases: &f/extraban, /eban, /extrab"
-    footer: "&6╚════════════════════════════════════════════╝"
-
-  # ----- Ban list (boxed, no auto-prefix) -----
-  banlist:
-    empty: "&aThere are currently no banned players."
-    header: "&6╔════════════ &eBanned Players &6════════════╗"
-    total: "&6║ &7Total: &a{count}"
-    separator: "&6║ &8----------------------------------------"
-    more: "&6║ &7... and &f{count} &7more (showing top entries)."
-    permanent: "&6║ &c{player} &8(&7Permanent&8) &7- &f{reason}"
-    temporary: "&6║ &c{player} &8(&7Expires: {expiry}&8) &7- &f{reason}"
-    tip: "&7Tip: &e/eb unban <player> &7to remove a ban."
-    footer: "&6╚════════════════════════════════════════╝"
-
-  # ----- System -----
-  system:
-    reload-success: "&aConfiguration reloaded successfully."
-    version-info: "&6ExtraBan &av{version} &8| &7Advanced moderation suite"
-
-  # ----- Update (boxed style for multi-line) -----
-  update:
-    available-header: "&8&m---------------------------------------------"
-    available-title: "&eA new update is available!"
-    available-current: "&7Current: &f{current}"
-    available-latest: "&7Latest: &a{latest}"
-    available-url: "&b{url}"
-    available-footer: "&8&m---------------------------------------------"
-    latest-header: "&8&m---------------------------------------------"
-    latest-title: "&aYou are running the latest version."
-    latest-version: "&7Version: &f{current}"
-    latest-footer: "&8&m---------------------------------------------"

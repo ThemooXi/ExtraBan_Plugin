@@ -11,7 +11,7 @@ load: STARTUP
 commands:
   eb:
     description: Main command for ExtraBan management.
-    usage: /<command> [ban|unban|tban|freeze|unfreeze|warn|unwarn|list|help|reload|version|update]
+    usage: /<command> [ban|kick|unban|tban|freeze|unfreeze|warn|unwarn|banlist|help|reload|version|update]
     aliases: [extraban, eban, extrab, exstraban, exstrab]
 
 permissions:
@@ -19,6 +19,7 @@ permissions:
     description: Grants all permissions for ExtraBan commands and features.
     children:
       extraban.ban: true
+      extraban.kick: true
       extraban.unban: true
       extraban.tempban: true
       extraban.freeze: true
@@ -31,6 +32,10 @@ permissions:
 
   extraban.ban:
     description: Allows banning players permanently.
+    default: op
+
+  extraban.kick:
+    description: Allows kicking players from the server.
     default: op
 
   extraban.unban:
@@ -78,6 +83,11 @@ permissions:
     description: Deprecated alias for extraban.ban.
     children:
       extraban.ban: true
+
+  extstraban.kick:
+    description: Deprecated alias for extraban.kick.
+    children:
+      extraban.kick: true
 
   extstraban.unban:
     description: Deprecated alias for extraban.unban.

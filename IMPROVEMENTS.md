@@ -100,7 +100,7 @@ mvn clean package
 ```
 
 ### Installation
-1. Copy `ExtraBan-2.0.0.jar` to the `plugins/` folder
+1. Copy `ExtraBan-2.1.0.jar` to the `plugins/` folder
 2. Restart the server
 3. Customize settings in `plugins/ExtraBan/config.yml`
 

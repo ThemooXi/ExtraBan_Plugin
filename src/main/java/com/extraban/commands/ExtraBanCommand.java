@@ -42,6 +42,7 @@ public class ExtraBanCommand implements CommandExecutor {
 
         return switch (args[0].toLowerCase()) {
             case "ban" -> handleBan(sender, args);
+            case "kick" -> handleKick(sender, args);
             case "unban" -> handleUnban(sender, args);
             case "tban", "tempban" -> handleTempBan(sender, args);
             case "freeze" -> handleFreeze(sender, args);
@@ -69,6 +70,19 @@ public class ExtraBanCommand implements CommandExecutor {
             return true;
         }
         executeBan(sender, args);
+        return true;
+    }
+
+    private boolean handleKick(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("extraban.kick")) {
+            messages.send(sender, "errors.no-permission");
+            return true;
+        }
+        if (args.length < 2) {
+            messages.send(sender, "usage.kick");
+            return true;
+        }
+        executeKick(sender, args);
         return true;
     }
 
@@ -158,7 +172,7 @@ public class ExtraBanCommand implements CommandExecutor {
             messages.send(sender, "errors.no-permission");
             return true;
         }
-        plugin.reloadConfig();
+        plugin.reloadPluginConfig();
         messages.send(sender, "system.reload-success");
         return true;
     }
@@ -211,10 +225,45 @@ public class ExtraBanCommand implements CommandExecutor {
             return;
         }
 
-        if (plugin.getConfig().getBoolean("settings.action-bar.enabled", true)) {
+        if (messages.isBanActionBarEnabled()) {
             actionBarManager.startCountdown(target, staffName, reason, "ban", null);
         } else {
             executeFinalBan(sender, playerName, reason);
+        }
+    }
+
+    private void executeKick(CommandSender sender, String[] args) {
+        String playerName = args[1];
+        String staffName = sender.getName();
+        String reason = args.length > 2
+                ? Arrays.stream(args).skip(2).collect(Collectors.joining(" "))
+                : messages.getKickDefaultReason();
+
+        Player target = Bukkit.getPlayer(playerName);
+        if (target == null) {
+            messages.send(sender, "errors.player-not-found", "player", playerName);
+            return;
+        }
+
+        if (messages.isKickActionBarEnabled()) {
+            actionBarManager.startCountdown(target, staffName, reason, "kick", null);
+        } else {
+            executeFinalKick(sender, target, reason);
+        }
+    }
+
+    private void executeFinalKick(CommandSender sender, Player target, String reason) {
+        String staffName = sender.getName();
+        target.kick(messages.asComponent(messages.raw("kick.screen",
+                "reason", reason,
+                "staff", staffName)));
+
+        messages.send(sender, "kick.success", "player", target.getName(), "reason", reason);
+        if (messages.isKickBroadcast()) {
+            Bukkit.broadcast(messages.asComponent(messages.msg("kick.broadcast",
+                    "player", target.getName(),
+                    "staff", staffName,
+                    "reason", reason)));
         }
     }
 
@@ -245,7 +294,7 @@ public class ExtraBanCommand implements CommandExecutor {
             return;
         }
 
-        if (plugin.getConfig().getBoolean("settings.action-bar.enabled", true)) {
+        if (messages.isBanActionBarEnabled()) {
             actionBarManager.startCountdown(target, staffName, reason, "tban", timeString);
         } else {
             try {
@@ -287,20 +336,15 @@ public class ExtraBanCommand implements CommandExecutor {
 
         freezeManager.freezePlayer(target, staffName, reason, duration);
 
-        if (duration.equals("permanent")) {
-            messages.send(sender, "freeze.success-permanent",
-                    "player", playerName, "reason", reason);
-            if (messages.isFreezeBroadcast()) {
-                Bukkit.broadcast(messages.asComponent(messages.msg("freeze.broadcast-permanent",
-                        "player", playerName, "staff", staffName, "reason", reason)));
-            }
-        } else {
-            messages.send(sender, "freeze.success-temporary",
-                    "player", playerName, "duration", duration, "reason", reason);
-            if (messages.isFreezeBroadcast()) {
-                Bukkit.broadcast(messages.asComponent(messages.msg("freeze.broadcast-temporary",
-                        "player", playerName, "staff", staffName, "duration", duration, "reason", reason)));
-            }
+        String durationText = duration.equals("permanent") ? "Permanent" : duration;
+        messages.send(sender, "freeze.success",
+                "player", playerName, "duration", durationText, "reason", reason);
+        if (messages.isFreezeBroadcast()) {
+            Bukkit.broadcast(messages.asComponent(messages.msg("freeze.broadcast",
+                    "player", playerName,
+                    "staff", staffName,
+                    "duration", durationText,
+                    "reason", reason)));
         }
     }
 
@@ -376,6 +420,11 @@ public class ExtraBanCommand implements CommandExecutor {
     private void executeUnban(CommandSender sender, String playerName) {
         if (BanUtils.pardon(playerName)) {
             messages.send(sender, "unban.success", "player", playerName);
+            if (messages.isUnbanBroadcast()) {
+                Bukkit.broadcast(messages.asComponent(messages.msg("unban.broadcast",
+                        "player", playerName,
+                        "staff", sender.getName())));
+            }
         } else {
             messages.send(sender, "errors.player-not-banned", "player", playerName);
         }
@@ -429,28 +478,54 @@ public class ExtraBanCommand implements CommandExecutor {
 
     private void showHelp(CommandSender sender) {
         messages.sendRaw(sender, "help.header");
-        messages.sendRaw(sender, "help.line");
 
-        if (sender.hasPermission("extraban.ban")) messages.sendRaw(sender, "help.ban");
-        if (sender.hasPermission("extraban.unban")) messages.sendRaw(sender, "help.unban");
-        if (sender.hasPermission("extraban.tempban")) {
-            messages.sendRaw(sender, "help.tban");
-            messages.sendRaw(sender, "help.time-formats");
+        boolean canBan = sender.hasPermission("extraban.ban");
+        boolean canKick = sender.hasPermission("extraban.kick");
+        boolean canUnban = sender.hasPermission("extraban.unban");
+        boolean canTempBan = sender.hasPermission("extraban.tempban");
+        boolean canFreeze = sender.hasPermission("extraban.freeze");
+        boolean canUnfreeze = sender.hasPermission("extraban.unfreeze");
+        boolean canWarn = sender.hasPermission("extraban.warn");
+        boolean canBanList = sender.hasPermission("extraban.banlist");
+        boolean canReload = sender.hasPermission("extraban.reload");
+        boolean canUpdate = sender.hasPermission("extraban.update");
+
+        if (canBan || canKick || canUnban || canTempBan) {
+            messages.sendRaw(sender, "help.blank");
+            messages.sendRaw(sender, "help.section-ban");
+            if (canBan) messages.sendRaw(sender, "help.ban");
+            if (canKick) messages.sendRaw(sender, "help.kick");
+            if (canUnban) messages.sendRaw(sender, "help.unban");
+            if (canTempBan) messages.sendRaw(sender, "help.tban");
         }
-        if (sender.hasPermission("extraban.freeze")) messages.sendRaw(sender, "help.freeze");
-        if (sender.hasPermission("extraban.unfreeze")) messages.sendRaw(sender, "help.unfreeze");
-        if (sender.hasPermission("extraban.warn")) {
+
+        if (canFreeze || canUnfreeze) {
+            messages.sendRaw(sender, "help.blank");
+            messages.sendRaw(sender, "help.section-freeze");
+            if (canFreeze) messages.sendRaw(sender, "help.freeze");
+            if (canUnfreeze) messages.sendRaw(sender, "help.unfreeze");
+        }
+
+        if (canWarn) {
+            messages.sendRaw(sender, "help.blank");
+            messages.sendRaw(sender, "help.section-warn");
             messages.sendRaw(sender, "help.warn");
             messages.sendRaw(sender, "help.unwarn");
         }
-        if (sender.hasPermission("extraban.banlist")) messages.sendRaw(sender, "help.banlist");
-        if (sender.hasPermission("extraban.reload")) messages.sendRaw(sender, "help.reload");
-        if (sender.hasPermission("extraban.update")) messages.sendRaw(sender, "help.update");
 
+        messages.sendRaw(sender, "help.blank");
+        messages.sendRaw(sender, "help.section-utility");
+        if (canBanList) messages.sendRaw(sender, "help.banlist");
+        if (canReload) messages.sendRaw(sender, "help.reload");
+        if (canUpdate) messages.sendRaw(sender, "help.update");
         messages.sendRaw(sender, "help.help");
         messages.sendRaw(sender, "help.version");
+
+        messages.sendRaw(sender, "help.blank");
+        if (canTempBan || canFreeze) {
+            messages.sendRaw(sender, "help.time-formats");
+        }
         messages.sendRaw(sender, "help.aliases");
-        messages.sendRaw(sender, "help.line");
         messages.sendRaw(sender, "help.footer");
     }
 }

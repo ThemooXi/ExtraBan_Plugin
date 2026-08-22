@@ -153,24 +153,20 @@ public class FreezeManager implements Listener {
                 if (currentCountdown[0] <= 0) {
                     applyFreezeEffects(target);
                     currentFreeze.countdownFinished = true;
-                    messages.sendRaw(target, currentFreeze.isTemporary()
-                                    ? "freeze.notify-temporary"
-                                    : "freeze.notify-permanent",
+                    messages.sendRaw(target, "freeze.notify",
                             "reason", currentFreeze.reason,
                             "duration", currentFreeze.isTemporary()
                                     ? MessageUtils.formatDuration(currentFreeze.expiryTime - System.currentTimeMillis())
                                     : "Permanent",
-                            "staff", currentFreeze.staffName,
-                            "time_left", formatTimeLeft(currentFreeze.expiryTime));
+                            "staff", currentFreeze.staffName);
                     startFreezeTask(target, currentFreeze);
                     cancel();
                     countdownTasks.remove(targetId);
                     return;
                 }
 
-                String countdownMessage = messages.setting(
-                        "settings.freeze.countdown-message",
-                        "&b&lFreeze incoming &8| &e{time}s",
+                String countdownMessage = messages.raw(
+                        "freeze.action-bar-countdown",
                         "time", String.valueOf(currentCountdown[0]));
                 sendActionBar(target, countdownMessage);
                 currentCountdown[0]--;
@@ -306,15 +302,10 @@ public class FreezeManager implements Listener {
     }
 
     private String getFrozenActionBarMessage(FreezeData freezeData) {
-        if (freezeData.isTemporary()) {
-            return messages.setting(
-                    "settings.freeze.frozen-message-temporary",
-                    "&b&lFROZEN &8| &7Time left: &f{time_left}",
-                    "time_left", formatTimeLeft(freezeData.expiryTime));
-        }
-        return messages.setting(
-                "settings.freeze.frozen-message-permanent",
-                "&b&lFROZEN &8| &7Type: &fPermanent");
+        String status = freezeData.isTemporary()
+                ? "Left: " + formatTimeLeft(freezeData.expiryTime)
+                : "Permanent";
+        return messages.raw("freeze.action-bar-frozen", "status", status);
     }
 
     private String formatTimeLeft(Long expiryTime) {

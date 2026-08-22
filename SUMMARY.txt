@@ -5,7 +5,7 @@
 Project Information
 -------------------
 Project Name:          ExtraBan - Advanced Ban & Moderation System
-Project Version:       2.0.0
+Project Version:       2.1.0
 Project Type:          Paper/Bukkit Plugin for Minecraft
 Programming Language:  Java 25
 Platform:              Minecraft 26.2+
@@ -164,7 +164,7 @@ Usage Steps
    mvn clean package
 
 2. Install:
-   - Copy ExtraBan-2.0.0.jar to plugins/
+   - Copy ExtraBan-2.1.0.jar to plugins/
    - Restart the server
 
 3. Configure:
@@ -195,4 +195,4 @@ The project is optimized and ready for production.
 
 Date:     August 20, 2026
 Status:   100% Complete
-Version:  2.0.0
+Version:  2.1.0
